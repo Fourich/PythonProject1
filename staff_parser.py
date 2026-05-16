@@ -32,10 +32,13 @@ async def get_department_info(department_url, session, semaphore):
     h1_tag = soup.find("h1")
     title_tag = soup.find("title")
 
-    if h1_tag and h1_tag.text.strip():
-        department_name = " ".join(h1_tag.text.split())
-    elif title_tag and title_tag.text.strip():
-        department_name = " ".join(title_tag.text.split())
+    h1_text = " ".join(h1_tag.text.split()) if h1_tag else ""
+    title_text = " ".join(title_tag.text.split()) if title_tag else ""
+
+    if h1_text and not h1_text.lower().startswith("новости"):
+        department_name = h1_text
+    elif title_text:
+        department_name = title_text
     else:
         department_name = "Название не найдено"
 
