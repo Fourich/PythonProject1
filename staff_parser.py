@@ -29,8 +29,15 @@ async def get_department_links(session, semaphore):
 async def get_department_info(department_url, session, semaphore):
     soup = await fetch_soup(department_url, session, semaphore)
 
+    h1_tag = soup.find("h1")
     title_tag = soup.find("title")
-    department_name = title_tag.text.strip() if title_tag else "Название не найдено"
+
+    if h1_tag and h1_tag.text.strip():
+        department_name = " ".join(h1_tag.text.split())
+    elif title_tag and title_tag.text.strip():
+        department_name = " ".join(title_tag.text.split())
+    else:
+        department_name = "Название не найдено"
 
     breadcrumbs = soup.select(".main__breadcrumbs .breadcrumbs__item")
     breadcrumbs_text = [" ".join(item.text.split()) for item in breadcrumbs if item.text.strip()]
